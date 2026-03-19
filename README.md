@@ -1,170 +1,82 @@
 # LLM Evaluation Platform
 
-A production-oriented platform for evaluating Large Language Models (LLMs), prompts, and AI pipelines. The system enables experiment-driven development of LLM applications through reproducible evaluation workflows.
+A production-oriented platform concept for evaluating Large Language Models (LLMs), prompts, and AI pipelines.
 
 
-# Motivation
+## Current Repository Status
 
-Developing reliable LLM systems requires structured evaluation. This platform provides the infrastructure required to systematically evaluate LLM systems.
+This repository currently contains:
 
-Engineers need to answer questions such as:
+- a comprehensive **system design and architecture documentation set**;
+- an initial **Python package/module skeleton**;
+- dependency and directory scaffolding for a FastAPI + worker-based platform;
 
-- Did a new prompt improve performance?
-- Which model performs best on this task?
-- Did the RAG pipeline reduce hallucinations?
-- What is the quality–cost tradeoff?
-
-
-# Key Features
-
-• Experiment-driven evaluation  
-• Prompt and dataset versioning  
-• Multi-model evaluation  
-• Pluggable evaluation metrics  
-• Distributed evaluation workers  
-• Reproducible runs  
-• Cost and latency tracking  
+This means the project is in an **architecture-first / pre-implementation stage**.
 
 
-# System Architecture
-The system is designed as a distributed evaluation pipeline.
-```
-API
-│
-▼
-Run Manager
-│
-▼
-Evaluation Orchestrator
-│
-▼
-Task Queue (Redis)
-│
-▼
-Worker Pool
-│
-▼
-Evaluation Engine
-│
-▼
-Model Gateway
-│
-▼
-LLM Providers
-```
+## Vision
 
+Build an inspiring, production-grade evaluation platform where teams can:
 
-# Core Components
-
-### API Layer
-
-FastAPI service providing REST endpoints for:
-
-- dataset management
-- experiment management
-- evaluation runs
-- results retrieval
-
-
-### Evaluation Engine
-
-Executes evaluation pipeline:
-
-1. prompt rendering  
-2. model inference  
-3. metric execution  
-4. metadata collection  
-
-
-### Model Gateway
-
-Unified interface for multiple LLM providers:
-
-- OpenAI
-- Anthropic
-- HuggingFace
-- local models
-
-
-### Metric System
-
-Plugin-based evaluation metrics:
-
-- exact match
-- semantic similarity
-- LLM judge
-- latency
-- cost
-
-
-### Distributed Workers
-
-Evaluation tasks are processed by worker nodes.
-
-This enables scaling to large evaluation datasets.
-
-
-# Example Workflow
-
-1. Create dataset
-2. Create prompt
-3. Configure model
-4. Run evaluation
-5. Analyze results
-
-
-# Project Structure
-```
-llm-eval-platform
-├── api
-├── core
-├── models
-├── services
-├── workers
-├── docs
-└── tests
-```
-
-
-# Running the Platform
-
-Start all services: **docker compose up --build**
-
-API will be available at: **http://localhost:8000**
-
-
-# Documentation
-
-Architecture and system design documentation:
-```
-docs/
-├── architecture.md
-├── data_model.md
-├── evaluation_engine.md
-├── run_lifecycle.md
-└── api.md
-```
-
-
-# Why This Project Exists
-
-Modern AI systems require **evaluation infrastructure** similar to what ML platforms provide.
-
-This project demonstrates the architecture of such a system and serves as a foundation for building scalable evaluation pipelines.
-
-
-# Future Work
-
-Planned improvements:
-
-- experiment dashboard
-- advanced RAG evaluation
-- human feedback integration
-- automated regression detection
-- prompt optimization pipelines
+- run reproducible evaluations across prompts, models, and datasets;
+- compare quality, latency, and cost trade-offs;
+- detect regressions before shipping LLM changes;
+- evolve toward automated, continuous evaluation in CI/CD;
 
 ---
 
-# License
+## Documentation Map
+
+Core design docs:
+
+- `docs/architecture.md` - system architecture and principles;
+- `docs/data_model.md` - entities and relational model;
+- `docs/evaluation_engine.md` - evaluation execution internals;
+- `docs/run_lifecycle.md` — run state machine and orchestration;
+- `docs/api.md` — target API specification;
+
+Planning and execution docs (added for implementation readiness):
+
+- `docs/repository_assessment.md` — gap analysis of current repo vs target platform
+- `docs/implementation_plan.md` — structured phased build plan with milestones
+- `docs/development.md` — engineering process, standards, and Definition of Done
+- `docs/templates/experiment_design_template.md` — reusable experiment brief template
+- `docs/templates/metric_spec_template.md` — reusable metric design template
+
+---
+
+## Proposed Build Sequence
+
+1. Platform foundation (configuration, app bootstrap, DB session handling)
+2. Core domain model + migrations
+3. API endpoints + validation
+4. Orchestration and worker loop
+5. Evaluation engine and model gateway
+6. Metrics + aggregation + observability
+7. Testing, benchmarking, and release hardening
+
+For detailed work breakdown, see `docs/implementation_plan.md`.
+
+---
+
+## Running (when implementation is in place)
+
+Target runtime stack:
+
+- API: FastAPI
+- DB: PostgreSQL
+- Queue: Redis/RQ
+- Workers: Python worker processes
+- Storage: S3-compatible object storage
+
+Planned start command:
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Licence
 
 Apache 2.0

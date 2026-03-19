@@ -1,5 +1,7 @@
 # LLM Evaluation Platform — API Specification
 
+> **Status note (2026-03):** This document is a target-state design specification. The Python service modules in this repository are currently scaffolds (mostly empty files), so treat this as implementation intent rather than current behavior.
+
 ## Overview
 
 This document defines the HTTP API for the **LLM Evaluation Platform**.

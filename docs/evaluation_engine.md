@@ -1,5 +1,7 @@
 # LLM Evaluation Platform — Evaluation Engine
 
+> **Status note (2026-03):** This document is a target-state design specification. The Python service modules in this repository are currently scaffolds (mostly empty files), so treat this as implementation intent rather than current behavior.
+
 ## Overview
 
 The **Evaluation Engine** is the core execution component responsible for running evaluations of LLM systems.

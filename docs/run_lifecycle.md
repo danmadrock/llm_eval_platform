@@ -1,5 +1,7 @@
 # LLM Evaluation Platform — Run Lifecycle
 
+> **Status note (2026-03):** This document is a target-state design specification. The Python service modules in this repository are currently scaffolds (mostly empty files), so treat this as implementation intent rather than current behavior.
+
 ## Overview
 
 This document defines the lifecycle of **evaluation runs** within the LLM Evaluation Platform.

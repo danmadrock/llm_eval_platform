@@ -1,5 +1,7 @@
 # LLM Evaluation Platform
 
+> **Status note (2026-03):** This document is a target-state design specification. The Python service modules in this repository are currently scaffolds (mostly empty files), so treat this as implementation intent rather than current behavior.
+
 ## Overview
 
 The **LLM Evaluation Platform** is an infrastructure system for systematically evaluating large language models (LLMs), prompts, and AI pipelines. The system produces **quantitative evaluation results**, enabling experiment-driven development of LLM systems.
