@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   quality:
@@ -35,6 +36,3 @@ jobs:
 
       - name: Pytest
         run: pytest
-
-      - name: Build Docker image
-        run: docker build -t llm-eval .

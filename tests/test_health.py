@@ -36,4 +36,3 @@ def test_readiness_failure(monkeypatch) -> None:
         "status": "not_ready",
         "services": {"database": True, "redis": False},
     }
-    
