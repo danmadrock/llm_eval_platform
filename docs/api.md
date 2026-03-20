@@ -1,547 +1,112 @@
 # LLM Evaluation Platform — API Specification
 
-> **Status note (2026-03):** This document is a target-state design specification. The Python service modules in this repository are currently scaffolds (mostly empty files), so treat this as implementation intent rather than current behavior.
+> **Status note (2026-03-19):** Phase 1 is now implemented in this repository for the core metadata domain. The endpoints below describe the current API surface for datasets, prompts, model configs, experiments, runs, and evaluation results.
 
 ## Overview
 
-This document defines the HTTP API for the **LLM Evaluation Platform**.
+The API exposes reproducible metadata workflows for the evaluation platform. It is implemented with **FastAPI** and follows a consistent envelope format for all CRUD endpoints.
 
-The API allows clients to:
-
-- manage datasets
-- manage prompts
-- manage model configurations
-- create experiments
-- run evaluations
-- monitor evaluation runs
-- retrieve evaluation results
-
-The API follows a **RESTful design** and is implemented using **FastAPI**.
-
-All endpoints return **JSON responses**.
-
----
-
-# Base URL
-
-Example base URL:
+Base URL
 
 ```
-http://localhost:8000/api/v1
+/api/v1
 ```
 
-Versioning allows future API evolution.
-
----
-
-# Authentication (Future)
-
-Authentication is not required for the MVP.
-
-Future versions may support:
-
-- API keys
-- OAuth
-- role-based access control
-
----
-
-# Core Resources
-
-The API manages the following resources:
-
-- datasets
-- dataset versions
-- prompts
-- prompt versions
-- model configs
-- experiments
-- runs
-- evaluation results
-- metrics
-
----
-
-# Response Format
-
-All responses follow a consistent structure.
+## Response Format
 
 Success response:
 
 ```
 {
-  "data": {...}
+  "data": {"id": "..."}
 }
 ```
 
 List response:
 
-```
+```json
 {
-  "data": [...],
+  "data": [],
   "pagination": {
     "limit": 50,
     "offset": 0,
-    "total": 120
+    "total": 1
   }
 }
 ```
 
 Error response:
 
-```
+```json
 {
   "error": {
     "code": "resource_not_found",
-    "message": "Dataset not found"
+    "message": "Dataset not found."
   }
 }
 ```
 
----
+## Implemented Core Endpoints
 
-# Datasets API
+### Datasets
 
-## Create Dataset
+- `POST /datasets`
+- `GET /datasets`
+- `GET /datasets/{dataset_id}`
+- `PATCH /datasets/{dataset_id}`
+- `DELETE /datasets/{dataset_id}`
+- `POST /datasets/{dataset_id}/versions`
+- `GET /datasets/{dataset_id}/versions`
 
-Creates a logical dataset container.
+Dataset versions are immutable and auto-increment from `1` per dataset.
 
-```
-POST /datasets
-```
+### Prompts
 
-Request:
+- `POST /prompts`
+- `GET /prompts`
+- `GET /prompts/{prompt_id}`
+- `PATCH /prompts/{prompt_id}`
+- `DELETE /prompts/{prompt_id}`
+- `POST /prompts/{prompt_id}/versions`
+- `GET /prompts/{prompt_id}/versions`
 
-```
-{
-  "name": "customer_support_qa",
-  "description": "Customer support evaluation dataset",
-  "task_type": "qa"
-}
-```
+Prompt versions are immutable and auto-increment from `1` per prompt.
 
-Response:
+### Model Configs
 
-```
-{
-  "data": {
-    "id": "dataset_id",
-    "name": "customer_support_qa",
-    "created_at": "..."
-  }
-}
-```
+- `POST /models`
+- `GET /models`
+- `GET /models/{model_config_id}`
+- `PATCH /models/{model_config_id}`
+- `DELETE /models/{model_config_id}`
 
----
+### Experiments
 
-## List Datasets
+- `POST /experiments`
+- `GET /experiments`
+- `GET /experiments/{experiment_id}`
+- `PATCH /experiments/{experiment_id}`
+- `DELETE /experiments/{experiment_id}`
 
-```
-GET /datasets
-```
+### Runs
 
-Query parameters:
+- `POST /runs`
+- `GET /runs`
+- `GET /runs/{run_id}`
+- `PATCH /runs/{run_id}`
+- `DELETE /runs/{run_id}`
 
-```
-limit
-offset
-```
+Run creation validates references to the selected experiment, dataset version, prompt version, and model configuration.
 
----
+### Evaluation Results
 
-## Get Dataset
+- `POST /results`
+- `GET /results`
+- `GET /results/{result_id}`
+- `PATCH /results/{result_id}`
+- `DELETE /results/{result_id}`
 
-```
-GET /datasets/{dataset_id}
-```
+`GET /results` supports optional filtering by `run_id`.
 
----
-
-# Dataset Versions API
-
-## Create Dataset Version
-
-Uploads a dataset file.
-
-```
-POST /datasets/{dataset_id}/versions
-```
-
-Request:
-
-```
-multipart/form-data
-file: dataset.jsonl
-```
-
-Response:
-
-```
-{
-  "data": {
-    "id": "dataset_version_id",
-    "dataset_id": "...",
-    "version": 1,
-    "example_count": 1200
-  }
-}
-```
-
----
-
-## List Dataset Versions
-
-```
-GET /datasets/{dataset_id}/versions
-```
-
----
-
-# Prompts API
-
-## Create Prompt
-
-```
-POST /prompts
-```
-
-Request:
-
-```
-{
-  "name": "support_prompt",
-  "description": "Customer support prompt"
-}
-```
-
----
-
-## Create Prompt Version
-
-```
-POST /prompts/{prompt_id}/versions
-```
-
-Request:
-
-```
-{
-  "template": "You are a helpful assistant.\n\nQuestion: {question}\nAnswer:"
-}
-```
-
----
-
-## List Prompts
-
-```
-GET /prompts
-```
-
----
-
-# Model Config API
-
-## Create Model Configuration
-
-```
-POST /models
-```
-
-Request:
-
-```
-{
-  "provider": "openai",
-  "model_name": "gpt-4o",
-  "parameters": {
-    "temperature": 0,
-    "max_tokens": 512
-  }
-}
-```
-
----
-
-## List Models
-
-```
-GET /models
-```
-
----
-
-# Experiments API
-
-Experiments group evaluation runs.
-
-## Create Experiment
-
-```
-POST /experiments
-```
-
-Request:
-
-```
-{
-  "name": "support_prompt_experiments",
-  "description": "Prompt optimization experiments"
-}
-```
-
----
-
-## List Experiments
-
-```
-GET /experiments
-```
-
----
-
-## Get Experiment
-
-```
-GET /experiments/{experiment_id}
-```
-
----
-
-# Runs API
-
-Runs represent evaluation executions.
-
----
-
-## Create Run
-
-```
-POST /runs
-```
-
-Request:
-
-```
-{
-  "experiment_id": "...",
-  "dataset_version_id": "...",
-  "prompt_version_id": "...",
-  "model_config_id": "...",
-  "metrics": [
-    "exact_match",
-    "semantic_similarity"
-  ]
-}
-```
-
-Response:
-
-```
-{
-  "data": {
-    "run_id": "...",
-    "status": "created"
-  }
-}
-```
-
----
-
-## Get Run
-
-```
-GET /runs/{run_id}
-```
-
-Response:
-
-```
-{
-  "data": {
-    "run_id": "...",
-    "status": "running",
-    "progress": 0.42,
-    "created_at": "...",
-    "started_at": "...",
-    "completed_at": null
-  }
-}
-```
-
----
-
-## List Runs
-
-```
-GET /runs
-```
-
-Query parameters:
-
-```
-experiment_id
-status
-limit
-offset
-```
-
----
-
-## Cancel Run
-
-```
-POST /runs/{run_id}/cancel
-```
-
----
-
-# Run Metrics API
-
-Aggregated metrics for a run.
-
-```
-GET /runs/{run_id}/metrics
-```
-
-Response:
-
-```
-{
-  "data": {
-    "exact_match": 0.81,
-    "semantic_similarity": 0.92,
-    "latency_ms_avg": 740,
-    "cost_total_usd": 12.40
-  }
-}
-```
-
----
-
-# Evaluation Results API
-
-Per-example results.
-
-```
-GET /runs/{run_id}/results
-```
-
-Query parameters:
-
-```
-limit
-offset
-```
-
-Example response:
-
-```
-{
-  "data": [
-    {
-      "example_index": 42,
-      "model_output": "...",
-      "scores": {
-        "exact_match": 1,
-        "semantic_similarity": 0.94
-      },
-      "latency_ms": 720
-    }
-  ]
-}
-```
-
----
-
-# Metrics API
-
-Lists supported evaluation metrics.
-
-```
-GET /metrics
-```
-
-Response:
-
-```
-{
-  "data": [
-    "exact_match",
-    "semantic_similarity",
-    "llm_judge",
-    "latency",
-    "cost"
-  ]
-}
-```
-
----
-
-# Pagination
-
-Endpoints returning lists support pagination.
-
-Parameters:
-
-```
-limit
-offset
-```
-
-Example:
-
-```
-GET /runs?limit=50&offset=0
-```
-
----
-
-# Filtering
-
-Common filtering options:
-
-```
-experiment_id
-status
-dataset_id
-model
-```
-
----
-
-# Rate Limiting (Future)
-
-Future versions may enforce rate limits.
-
-Example:
-
-```
-100 requests / minute
-```
-
----
-
-# Future Extensions
-
-The API can be extended to support:
-
-- human evaluation annotations
-- experiment comparison endpoints
-- dataset browsing
-- RAG evaluation endpoints
-- prompt optimization workflows
-
----
-
-# Summary
-
-The API provides a simple and extensible interface for managing evaluation workflows.
-
-Key characteristics:
-
-- RESTful resource design
-- asynchronous evaluation runs
-- reproducible configurations
-- scalable result retrieval
-- minimal complexity for MVP
+## Migration Reproducibility
+Schema management is handled by Alembic. The Phase 1 initial migration creates all implemented tables and supports a full `upgrade -> downgrade -> upgrade` cycle, which is exercised by automated tests.

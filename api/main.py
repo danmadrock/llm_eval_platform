@@ -1,12 +1,26 @@
 from contextlib import asynccontextmanager
 
 import redis
-from fastapi import FastAPI, status
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+import models  # noqa: F401
+from api.routes import (
+    datasets_router,
+    experiments_router,
+    models_router,
+    prompt_versions_router,
+    prompts_router,
+    results_router,
+    runs_router,
+)
+
 from core.config import get_settings
+from core.exceptions import DomainError
 from core.database import Base, check_database_health, engine
 from core.logging import configure_logging, get_logger
+
 
 settings = get_settings()
 configure_logging(settings.log_level)
@@ -24,6 +38,26 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
+
+@app.exception_handler(DomainError)
+async def handle_domain_error(_: Request, exc: DomainError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": {"code": exc.code, "message": exc.message}},
+    )
+
+@app.exception_handler(RequestValidationError)
+async def handle_validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "error": {
+                "code": "validation_error",
+                "message": "Request validation failed.",
+                "details": exc.errors(),
+            }
+        },
+    )
 
 def check_redis_health() -> bool:
     client = redis.from_url(settings.redis_url)
@@ -61,3 +95,15 @@ def readiness() -> JSONResponse:
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={"status": "not_ready", "services": services},
     )
+
+api_v1_prefix = "/api/v1"
+for router in [
+    datasets_router,
+    prompts_router,
+    prompt_versions_router,
+    models_router,
+    experiments_router,
+    runs_router,
+    results_router,
+]:
+    app.include_router(router, prefix=api_v1_prefix)
