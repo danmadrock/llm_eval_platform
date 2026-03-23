@@ -1,5 +1,5 @@
-from models.model_config import ModelConfig
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.model_config import ModelConfig
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class ModelRepository(BaseRepository[ModelConfig]):

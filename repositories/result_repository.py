@@ -3,8 +3,8 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models.evaluation_result import EvaluationResult
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.evaluation_result import EvaluationResult
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class ResultRepository(BaseRepository[EvaluationResult]):

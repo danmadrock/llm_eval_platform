@@ -5,11 +5,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
-from api.dependencies import get_experiment_service
-from api.routes.utils import data_response, list_response
-from core.database import get_db
-from schemas.experiment import ExperimentCreate, ExperimentRead, ExperimentUpdate
-from services.experiments.experiment_service import ExperimentService
+from llm_eval_platform.api.dependencies import get_experiment_service
+from llm_eval_platform.api.routes.utils import data_response, list_response
+from llm_eval_platform.core.database import get_db
+from llm_eval_platform.schemas.experiment import ExperimentCreate, ExperimentRead, ExperimentUpdate
+from llm_eval_platform.services.experiments.experiment_service import ExperimentService
 
 router = APIRouter(prefix="/experiments", tags=["experiments"])
 

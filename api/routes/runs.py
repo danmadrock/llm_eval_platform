@@ -5,11 +5,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
-from api.dependencies import get_run_service
-from api.routes.utils import data_response, list_response
-from core.database import get_db
-from schemas.run import RunCreate, RunRead, RunUpdate
-from services.runs.run_service import RunService
+from llm_eval_platform.api.dependencies import get_run_service
+from llm_eval_platform.api.routes.utils import data_response, list_response
+from llm_eval_platform.core.database import get_db
+from llm_eval_platform.schemas.run import RunCreate, RunRead, RunUpdate
+from llm_eval_platform.services.runs.run_service import RunService
 
 router = APIRouter(prefix="/runs", tags=["runs"])
 

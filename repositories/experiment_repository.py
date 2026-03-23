@@ -1,5 +1,5 @@
-from models.experiment import Experiment
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.experiment import Experiment
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class ExperimentRepository(BaseRepository[Experiment]):

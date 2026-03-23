@@ -5,18 +5,18 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
-from api.dependencies import get_dataset_service, get_dataset_version_service
-from api.routes.utils import data_response, list_response
-from core.database import get_db
-from schemas.dataset import (
+from llm_eval_platform.api.dependencies import get_dataset_service, get_dataset_version_service
+from llm_eval_platform.api.routes.utils import data_response, list_response
+from llm_eval_platform.core.database import get_db
+from llm_eval_platform.schemas.dataset import (
     DatasetCreate,
     DatasetRead,
     DatasetUpdate,
     DatasetVersionCreate,
     DatasetVersionRead,
 )
-from services.datasets.dataset_service import DatasetService
-from services.datasets.dataset_version_service import DatasetVersionService
+from llm_eval_platform.services.datasets.dataset_service import DatasetService
+from llm_eval_platform.services.datasets.dataset_version_service import DatasetVersionService
 
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])

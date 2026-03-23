@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.experiment_repository import ExperimentRepository
-from schemas.experiment import ExperimentCreate, ExperimentUpdate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.experiment_repository import ExperimentRepository
+from llm_eval_platform.schemas.experiment import ExperimentCreate, ExperimentUpdate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class ExperimentService(ServiceBase):

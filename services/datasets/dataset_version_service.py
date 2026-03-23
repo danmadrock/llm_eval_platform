@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.dataset_repository import DatasetRepository
-from schemas.dataset import DatasetVersionCreate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.dataset_repository import DatasetRepository
+from llm_eval_platform.schemas.dataset import DatasetVersionCreate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class DatasetVersionService(ServiceBase):
