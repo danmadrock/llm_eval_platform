@@ -5,11 +5,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
-from api.dependencies import get_evaluation_result_service
-from api.routes.utils import data_response, list_response
-from core.database import get_db
-from schemas.result import EvaluationResultCreate, EvaluationResultRead, EvaluationResultUpdate
-from services.evaluation_result_service import EvaluationResultService
+from llm_eval_platform.api.dependencies import get_evaluation_result_service
+from llm_eval_platform.api.routes.utils import data_response, list_response
+from llm_eval_platform.core.database import get_db
+from llm_eval_platform.schemas.result import EvaluationResultCreate, EvaluationResultRead, EvaluationResultUpdate
+from llm_eval_platform.services.evaluation_result_service import EvaluationResultService
 
 router = APIRouter(prefix="/results", tags=["evaluation-results"])
 

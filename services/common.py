@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from core.exceptions import ConflictError, NotFoundError
+from llm_eval_platform.core.exceptions import ConflictError, NotFoundError
 
 
 class ServiceBase:

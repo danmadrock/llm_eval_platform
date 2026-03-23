@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 import models  # noqa: F401
-from api.routes import (
+from llm_eval_platform.api.routes import (
     datasets_router,
     experiments_router,
     models_router,
@@ -15,11 +15,10 @@ from api.routes import (
     results_router,
     runs_router,
 )
-
-from core.config import get_settings
-from core.exceptions import DomainError
-from core.database import Base, check_database_health, engine
-from core.logging import configure_logging, get_logger
+from llm_eval_platform.core.config import get_settings
+from llm_eval_platform.core.exceptions import DomainError
+from llm_eval_platform.core.database import Base, check_database_health, engine
+from llm_eval_platform.core.logging import configure_logging, get_logger
 
 
 settings = get_settings()

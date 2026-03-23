@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
-    from models.run import Run
+    from llm_eval_platform.models.run import Run
 
 
 class Experiment(UUIDPrimaryKeyMixin, TimestampedModel):

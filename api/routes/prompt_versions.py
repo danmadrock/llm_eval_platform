@@ -5,11 +5,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from api.dependencies import get_prompt_version_service
-from api.routes.utils import data_response
-from core.database import get_db
-from schemas.prompt import PromptVersionCreate, PromptVersionRead
-from services.prompts.prompt_version_service import PromptVersionService
+from llm_eval_platform.api.dependencies import get_prompt_version_service
+from llm_eval_platform.api.routes.utils import data_response
+from llm_eval_platform.core.database import get_db
+from llm_eval_platform.schemas.prompt import PromptVersionCreate, PromptVersionRead
+from llm_eval_platform.services.prompts.prompt_version_service import PromptVersionService
 
 router = APIRouter(prefix="/prompts", tags=["prompt-versions"])
 

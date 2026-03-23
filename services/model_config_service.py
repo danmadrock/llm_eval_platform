@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.model_repository import ModelRepository
-from schemas.model_config import ModelConfigCreate, ModelConfigUpdate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.model_repository import ModelRepository
+from llm_eval_platform.schemas.model_config import ModelConfigCreate, ModelConfigUpdate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class ModelConfigService(ServiceBase):

@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from core.exceptions import ConflictError
+from llm_eval_platform.core.exceptions import ConflictError
 
 ModelT = TypeVar("ModelT")
 

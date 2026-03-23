@@ -3,7 +3,7 @@ from collections.abc import Generator
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from core.config import get_settings
+from llm_eval_platform.core.config import get_settings
 
 NAMING_CONVENTION = {
     "ix": "ix_%(column_0_label)s",

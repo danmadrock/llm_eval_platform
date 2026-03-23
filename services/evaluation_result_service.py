@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.result_repository import ResultRepository
-from repositories.run_repository import RunRepository
-from schemas.result import EvaluationResultCreate, EvaluationResultUpdate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.result_repository import ResultRepository
+from llm_eval_platform.repositories.run_repository import RunRepository
+from llm_eval_platform.schemas.result import EvaluationResultCreate, EvaluationResultUpdate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class EvaluationResultService(ServiceBase):

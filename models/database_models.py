@@ -6,7 +6,7 @@ from datetime import datetime
 from sqlalchemy import DateTime, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from core.database import Base
+from llm_eval_platform.core.database import Base
 
 
 class TimestampedModel(Base):

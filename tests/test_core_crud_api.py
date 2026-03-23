@@ -8,8 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 import models  # noqa: F401
-from api.main import app
-from core.database import Base, get_db
+from llm_eval_platform.api.main import app
+from llm_eval_platform.core.database import Base, get_db
 
 
 @pytest.fixture()

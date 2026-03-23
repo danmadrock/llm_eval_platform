@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.prompt_repository import PromptRepository
-from schemas.prompt import PromptVersionCreate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.prompt_repository import PromptRepository
+from llm_eval_platform.schemas.prompt import PromptVersionCreate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class PromptVersionService(ServiceBase):

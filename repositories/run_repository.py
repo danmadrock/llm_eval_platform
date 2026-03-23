@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from models.run import Run
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.run import Run
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class RunRepository(BaseRepository[Run]):

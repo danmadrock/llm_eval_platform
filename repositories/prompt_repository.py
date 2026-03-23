@@ -3,8 +3,8 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from models.prompt import Prompt, PromptVersion
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.prompt import Prompt, PromptVersion
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class PromptRepository(BaseRepository[Prompt]):

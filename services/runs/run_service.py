@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from repositories.dataset_repository import DatasetRepository
-from repositories.experiment_repository import ExperimentRepository
-from repositories.model_repository import ModelRepository
-from repositories.prompt_repository import PromptRepository
-from repositories.run_repository import RunRepository
-from schemas.run import RunCreate, RunUpdate
-from services.common import ServiceBase
+from llm_eval_platform.repositories.dataset_repository import DatasetRepository
+from llm_eval_platform.repositories.experiment_repository import ExperimentRepository
+from llm_eval_platform.repositories.model_repository import ModelRepository
+from llm_eval_platform.repositories.prompt_repository import PromptRepository
+from llm_eval_platform.repositories.run_repository import RunRepository
+from llm_eval_platform.schemas.run import RunCreate, RunUpdate
+from llm_eval_platform.services.common import ServiceBase
 
 
 class RunService(ServiceBase):

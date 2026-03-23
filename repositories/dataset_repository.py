@@ -3,8 +3,8 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
-from models.dataset import Dataset, DatasetVersion
-from repositories.base_repository import BaseRepository
+from llm_eval_platform.models.dataset import Dataset, DatasetVersion
+from llm_eval_platform.repositories.base_repository import BaseRepository
 
 
 class DatasetRepository(BaseRepository[Dataset]):

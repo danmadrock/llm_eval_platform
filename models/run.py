@@ -7,14 +7,14 @@ from typing import TYPE_CHECKING
 from sqlalchemy import JSON, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
-    from models.dataset import DatasetVersion
-    from models.evaluation_result import EvaluationResult
-    from models.experiment import Experiment
-    from models.model_config import ModelConfig
-    from models.prompt import PromptVersion
+    from llm_eval_platform.models.dataset import DatasetVersion
+    from llm_eval_platform.models.evaluation_result import EvaluationResult
+    from llm_eval_platform.models.experiment import Experiment
+    from llm_eval_platform.models.model_config import ModelConfig
+    from llm_eval_platform.models.prompt import PromptVersion
 
 
 class Run(UUIDPrimaryKeyMixin, TimestampedModel):

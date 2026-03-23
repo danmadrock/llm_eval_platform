@@ -1,9 +1,9 @@
-from models.dataset import Dataset, DatasetVersion
-from models.evaluation_result import EvaluationResult
-from models.experiment import Experiment
-from models.model_config import ModelConfig
-from models.prompt import Prompt, PromptVersion
-from models.run import Run
+from llm_eval_platform.models.dataset import Dataset, DatasetVersion
+from llm_eval_platform.models.evaluation_result import EvaluationResult
+from llm_eval_platform.models.experiment import Experiment
+from llm_eval_platform.models.model_config import ModelConfig
+from llm_eval_platform.models.prompt import Prompt, PromptVersion
+from llm_eval_platform.models.run import Run
 
 __all__ = [
     "Dataset",
