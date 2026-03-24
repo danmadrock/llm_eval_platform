@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from llm_eval_platform.models.run import Run
@@ -22,7 +22,20 @@ class RunRepository(BaseRepository[Run]):
                 selectinload(Run.prompt_version),
                 selectinload(Run.model_config),
                 selectinload(Run.evaluation_results),
+                selectinload(Run.metrics),
             )
             .where(Run.id == run_id)
         )
         return db.scalar(stmt)
+
+    def list(self, db: Session, *, limit: int, offset: int):
+        stmt = (
+            select(Run)
+            .options(selectinload(Run.metrics))
+            .order_by(Run.created_at.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        items = db.scalars(stmt).all()
+        total = db.scalar(select(func.count()).select_from(Run)) or 0
+        return items, total

@@ -21,6 +21,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 UUID_TYPE = sa.Uuid()
 TIMESTAMP_TYPE = sa.DateTime(timezone=True)
+
+
 def upgrade() -> None:
     op.create_table(
         "datasets",
@@ -130,6 +132,10 @@ def upgrade() -> None:
         sa.Column("model_config_id", UUID_TYPE, nullable=False),
         sa.Column("status", sa.String(length=50), nullable=False),
         sa.Column("parameters", sa.JSON(), nullable=False),
+        sa.Column("total_examples", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("processed_examples", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("completed_examples", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("failed_examples", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("error_message", sa.Text(), nullable=True),
         sa.Column("started_at", TIMESTAMP_TYPE, nullable=True),
         sa.Column("completed_at", TIMESTAMP_TYPE, nullable=True),
@@ -197,8 +203,34 @@ def upgrade() -> None:
         op.f("ix_evaluation_results_status"), "evaluation_results", ["status"], unique=False
     )
 
+    op.create_table(
+        "run_metrics",
+        sa.Column("run_id", UUID_TYPE, nullable=False),
+        sa.Column("metric_name", sa.String(length=100), nullable=False),
+        sa.Column("value", sa.Float(), nullable=False),
+        sa.Column("computed_at", TIMESTAMP_TYPE, nullable=False),
+        sa.Column("created_at", TIMESTAMP_TYPE, server_default=sa.func.now(), nullable=False),
+        sa.Column("updated_at", TIMESTAMP_TYPE, server_default=sa.func.now(), nullable=False),
+        sa.Column("id", UUID_TYPE, nullable=False),
+        sa.ForeignKeyConstraint(
+            ["run_id"],
+            ["runs.id"],
+            name=op.f("fk_run_metrics_run_id_runs"),
+            ondelete="CASCADE",
+        ),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_run_metrics")),
+        sa.UniqueConstraint("run_id", "metric_name", name=op.f("uq_run_metrics_run_id")),
+    )
+    op.create_index(
+        op.f("ix_run_metrics_metric_name"), "run_metrics", ["metric_name"], unique=False
+    )
+    op.create_index(op.f("ix_run_metrics_run_id"), "run_metrics", ["run_id"], unique=False)
+
 
 def downgrade() -> None:
+    op.drop_index(op.f("ix_run_metrics_run_id"), table_name="run_metrics")
+    op.drop_index(op.f("ix_run_metrics_metric_name"), table_name="run_metrics")
+    op.drop_table("run_metrics")
     op.drop_index(op.f("ix_evaluation_results_status"), table_name="evaluation_results")
     op.drop_index(op.f("ix_evaluation_results_run_id"), table_name="evaluation_results")
     op.drop_table("evaluation_results")

@@ -13,7 +13,7 @@ class TaskBuilder:
 
     def build_tasks(self, run: Run) -> list[EvaluationTask]:
         examples = self.dataset_storage.load_examples(run.dataset_version.object_uri)
-        metric_names = self._resolve_metrics(run.parameters)
+        metric_names = self.resolve_metrics(run.parameters)
         tasks: list[EvaluationTask] = []
         for index, record in enumerate(examples):
             input_payload, expected_output = self._split_record(record)
@@ -55,7 +55,7 @@ class TaskBuilder:
         return input_payload, expected_output
 
     @staticmethod
-    def _resolve_metrics(parameters: dict[str, Any]) -> list[str]:
+    def resolve_metrics(parameters: dict[str, Any]) -> list[str]:
         configured = parameters.get("metrics") if isinstance(parameters, dict) else None
         if not configured:
             return ["exact_match"]

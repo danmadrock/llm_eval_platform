@@ -4,6 +4,7 @@ from llm_eval_platform.models.experiment import Experiment
 from llm_eval_platform.models.model_config import ModelConfig
 from llm_eval_platform.models.prompt import Prompt, PromptVersion
 from llm_eval_platform.models.run import Run
+from llm_eval_platform.models.run_metric import RunMetric
 
 __all__ = [
     "Dataset",
@@ -14,4 +15,5 @@ __all__ = [
     "Prompt",
     "PromptVersion",
     "Run",
+    "RunMetric",
 ]

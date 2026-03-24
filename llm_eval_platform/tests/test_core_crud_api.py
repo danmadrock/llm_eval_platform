@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import models  # noqa: F401
+import llm_eval_platform.models  # noqa: F401
 from llm_eval_platform.api.main import app
 from llm_eval_platform.core.database import Base, get_db
 
@@ -106,6 +106,7 @@ def test_core_crud_workflow(client: TestClient) -> None:
     )
     assert updated_run.status_code == 200
     assert updated_run.json()["data"]["status"] == "running"
+    assert updated_run.json()["data"]["processed_examples"] == 0
 
     result = client.post(
         "/api/v1/results",

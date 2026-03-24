@@ -34,17 +34,18 @@ class RunOrchestrator:
         total_examples = len(tasks)
         run.parameters = {
             **(run.parameters or {}),
-            "metrics": self.task_builder._resolve_metrics(run.parameters or {}),
-            "total_examples": total_examples,
-            "processed_examples": 0,
-            "completed_examples": 0,
-            "failed_examples": 0,
+            "metrics": self.task_builder.resolve_metrics(run.parameters or {}),
             "queued_at": datetime.now(timezone.utc).isoformat(),
         }
+        run.total_examples = total_examples
+        run.processed_examples = 0
+        run.completed_examples = 0
+        run.failed_examples = 0 
         run.status = "queued"
         run.error_message = None
         run.started_at = None
         run.completed_at = None
+        run.metrics.clear()
         db.add(run)
         db.commit()
         db.refresh(run)
@@ -64,6 +65,7 @@ class RunOrchestrator:
                 selectinload(Run.dataset_version),
                 selectinload(Run.prompt_version),
                 selectinload(Run.model_config),
+                selectinload(Run.metrics),
             )
             .where(Run.id == run_id)
         )

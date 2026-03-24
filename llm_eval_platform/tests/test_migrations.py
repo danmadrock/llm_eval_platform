@@ -16,12 +16,13 @@ EXPECTED_TABLES = {
     "experiments",
     "runs",
     "evaluation_results",
+    "run_metrics",
 }
 
 
 def build_config(db_path: Path) -> Config:
     config = Config("alembic.ini")
-    config.set_main_option("script_location", "migrations")
+    config.set_main_option("script_location", "llm_eval_platform/migrations")
     config.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
     return config
 
