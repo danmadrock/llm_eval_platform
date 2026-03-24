@@ -8,6 +8,7 @@ from llm_eval_platform.services.metrics.semantic_similarity import SemanticSimil
 
 class LLMJudgeMetric(BaseMetric):
     name = "llm_judge"
+    experimental = True
 
     def compute(
         self,

@@ -36,3 +36,8 @@ def test_readiness_failure(monkeypatch) -> None:
         "status": "not_ready",
         "services": {"database": True, "redis": False},
     }
+
+def test_prometheus_metrics_endpoint() -> None:
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert "http_requests_total" in response.text

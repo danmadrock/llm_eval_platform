@@ -4,6 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from llm_eval_platform.core.database import SessionLocal
+from llm_eval_platform.core.logging import get_logger
+from llm_eval_platform.core.observability import metrics
 from llm_eval_platform.models.evaluation_result import EvaluationResult
 from llm_eval_platform.models.run import Run
 from llm_eval_platform.services.evaluation_engine.engine import EvaluationEngine
@@ -15,6 +17,8 @@ from llm_eval_platform.services.runs.run_aggregator import RunAggregator
 from llm_eval_platform.services.runs.run_progress_tracker import RunProgressTracker
 from llm_eval_platform.tasks.evaluation_task import EvaluationTask
 
+
+logger = get_logger(__name__)
 
 def process_evaluation_task(payload: dict) -> dict:
     task = EvaluationTask.from_payload(payload)
@@ -37,6 +41,14 @@ def process_evaluation_task(payload: dict) -> dict:
             db.commit()
             db.refresh(persisted)
             run = db.scalar(select(Run).where(Run.id == task.run_id))
+            logger.info(
+                "evaluation.result.persisted",
+                run_id=str(task.run_id),
+                example_index=task.example_index,
+                result_id=str(persisted.id),
+                status="completed",
+                idempotency_key=task.idempotency_key(),
+            )
             return {
                 "run_id": str(task.run_id),
                 "result_id": str(persisted.id),
@@ -81,6 +93,26 @@ def process_evaluation_task(payload: dict) -> dict:
             db.commit()
             db.refresh(persisted)
             run = db.scalar(select(Run).where(Run.id == task.run_id))
+            metrics.inc(
+                "evaluation_failures_total",
+                labels={
+                    "provider": task.model_provider,
+                    "category": details.category,
+                    "stage": details.stage,
+                },
+            )
+            logger.error(
+                "evaluation.failed",
+                run_id=str(task.run_id),
+                example_index=task.example_index,
+                provider=task.model_provider,
+                category=details.category,
+                stage=details.stage,
+                retryable=details.retryable,
+                attempts=details.attempts,
+                idempotency_key=task.idempotency_key(),
+                error=str(exc),
+            )
             return {
                 "run_id": str(task.run_id),
                 "result_id": str(persisted.id),

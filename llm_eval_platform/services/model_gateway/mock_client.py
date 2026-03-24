@@ -17,6 +17,7 @@ class MockModelClient(BaseModelClient):
         parameters: dict[str, Any],
         input_payload: dict[str, Any],
         expected_output: dict[str, Any] | None,
+        idempotency_key: str | None = None,
     ) -> ModelResponse:
         started = perf_counter()
         strategy = str(parameters.get("mock_strategy", "expected_output"))

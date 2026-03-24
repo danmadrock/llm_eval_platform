@@ -137,6 +137,11 @@ def test_core_crud_workflow(client: TestClient) -> None:
     assert results.json()["pagination"]["total"] == 1
     assert results.json()["data"][0]["id"] == result_id
 
+    analytics = client.get(f"/api/v1/runs/{run_id}/analytics")
+    assert analytics.status_code == 200
+    assert analytics.json()["data"]["kpis"]["average_score"] == 0.92
+    assert analytics.json()["data"]["kpis"]["latency_p50_ms"] == 123.0
+    
     update_result = client.patch(
         f"/api/v1/results/{result_id}",
         json={"score": 1.0, "metadata": {"latency_ms": 100}},

@@ -6,6 +6,7 @@ from typing import Any
 
 class BaseMetric(ABC):
     name: str
+    experimental: bool = False
 
     @abstractmethod
     def compute(

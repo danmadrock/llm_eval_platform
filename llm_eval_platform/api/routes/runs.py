@@ -9,7 +9,7 @@ from llm_eval_platform.api.dependencies import get_evaluation_result_service, ge
 from llm_eval_platform.api.routes.utils import data_response, list_response
 from llm_eval_platform.core.database import get_db
 from llm_eval_platform.schemas.result import EvaluationResultRead
-from llm_eval_platform.schemas.run import RunCreate, RunRead, RunUpdate
+from llm_eval_platform.schemas.run import RunAnalyticsRead, RunCreate, RunRead, RunUpdate
 from llm_eval_platform.services.evaluation_result_service import EvaluationResultService
 from llm_eval_platform.services.runs.run_service import RunService
 
@@ -56,6 +56,16 @@ def get_run(
     service: RunService = Depends(get_run_service),
 ):
     return data_response(RunRead.model_validate(service.get(db, run_id)).model_dump(mode="json"))
+
+
+@router.get("/{run_id}/analytics", response_model=dict)
+def get_run_analytics(
+    run_id: UUID,
+    db: Session = Depends(get_db),
+    service: RunService = Depends(get_run_service),
+):
+    analytics = service.get_analytics(db, run_id)
+    return data_response(RunAnalyticsRead.model_validate(analytics).model_dump(mode="json"))
 
 
 @router.get("/{run_id}/results", response_model=dict)

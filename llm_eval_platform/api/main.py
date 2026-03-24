@@ -3,9 +3,11 @@ from contextlib import asynccontextmanager
 import redis
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
+
 
 import llm_eval_platform.models  # noqa: F401
+from llm_eval_platform.api.middleware import add_http_observability_middleware
 from llm_eval_platform.api.routes import (
     datasets_router,
     experiments_router,
@@ -19,6 +21,7 @@ from llm_eval_platform.core.config import get_settings
 from llm_eval_platform.core.database import Base, check_database_health, engine
 from llm_eval_platform.core.exceptions import DomainError
 from llm_eval_platform.core.logging import configure_logging, get_logger
+from llm_eval_platform.core.observability import metrics
 
 settings = get_settings()
 configure_logging(settings.log_level)
@@ -35,6 +38,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
+add_http_observability_middleware(app)
 
 
 @app.exception_handler(DomainError)
@@ -95,6 +99,10 @@ def readiness() -> JSONResponse:
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={"status": "not_ready", "services": services},
     )
+
+@app.get("/metrics", response_class=PlainTextResponse)
+def prometheus_metrics() -> str:
+    return metrics.render()
 
 
 api_v1_prefix = "/api/v1"

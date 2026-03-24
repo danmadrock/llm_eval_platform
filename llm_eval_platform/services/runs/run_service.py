@@ -10,6 +10,7 @@ from llm_eval_platform.repositories.run_repository import RunRepository
 from llm_eval_platform.schemas.run import RunCreate, RunUpdate
 from llm_eval_platform.services.common import ServiceBase
 from llm_eval_platform.services.run_orchestration.orchestrator import RunOrchestrator
+from llm_eval_platform.services.runs.run_aggregator import RunAggregator
 
 
 class RunService(ServiceBase):
@@ -21,6 +22,7 @@ class RunService(ServiceBase):
         prompt_repository: PromptRepository | None = None,
         model_repository: ModelRepository | None = None,
         orchestrator: RunOrchestrator | None = None,
+        run_aggregator: RunAggregator | None = None,
     ) -> None:
         self.repository = repository or RunRepository()
         self.experiment_repository = experiment_repository or ExperimentRepository()
@@ -28,6 +30,7 @@ class RunService(ServiceBase):
         self.prompt_repository = prompt_repository or PromptRepository()
         self.model_repository = model_repository or ModelRepository()
         self.orchestrator = orchestrator or RunOrchestrator()
+        self.run_aggregator = run_aggregator or RunAggregator()
 
     def create(self, db: Session, payload: RunCreate):
         self._require(
@@ -67,3 +70,9 @@ class RunService(ServiceBase):
         run = self._require(self.repository.get(db, run_id), "Run not found.")
         self.repository.delete(db, run)
         self._commit(db)
+
+    def get_analytics(self, db: Session, run_id):
+        self._require(self.repository.get(db, run_id), "Run not found.")
+        self.run_aggregator.update_summary(db, run_id)
+        self._commit(db)
+        return self.run_aggregator.get_analytics(db, run_id)

@@ -64,6 +64,13 @@ def classify_failure(exc: BaseException, *, provider: str | None, stage: str) ->
             retryable=False,
             provider=provider,
         )
+    if "idempotency" in message or "duplicate" in message:
+        return FailureDetails(
+            category="idempotency_error",
+            stage=stage,
+            retryable=False,
+            provider=provider,
+        )
     if isinstance(exc, ValueError) and "unsupported" in message:
         return FailureDetails(
             category="configuration_error",

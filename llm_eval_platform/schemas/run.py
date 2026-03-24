@@ -66,3 +66,12 @@ class RunRead(BaseModel):
     created_at: datetime
     updated_at: datetime
     metrics: list[RunMetricRead] = Field(default_factory=list)
+
+
+class RunAnalyticsRead(BaseModel):
+    run_id: UUID
+    status: str
+    examples: dict[str, int]
+    kpis: dict[str, float | None]
+    metrics: dict[str, float]
+    status_breakdown: dict[str, int]
