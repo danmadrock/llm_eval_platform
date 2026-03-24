@@ -8,10 +8,10 @@ A production-oriented platform concept for evaluating Large Language Models (LLM
 This repository currently contains:
 
 - a comprehensive **system design and architecture documentation set**;
-- an initial **Python package/module skeleton**;
-- dependency and directory scaffolding for a FastAPI + worker-based platform;
+- implemented Phase 1 CRUD APIs for core metadata;
+- an implemented Phase 2 vertical slice proving asynchronous evaluation from run orchestration through persisted results;
 
-This means the project is in an **architecture-first / pre-implementation stage**.
+The platform is now in an **early vertical-slice implementation stage**.
 
 
 ## Vision
