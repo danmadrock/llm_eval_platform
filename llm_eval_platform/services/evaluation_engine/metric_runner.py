@@ -22,6 +22,8 @@ class MetricRunner:
             LLMJudgeMetric(),
         ]
         self._registry = {metric.name: metric for metric in metric_plugins}
+        if "llm_judge" in self._registry:
+            self._registry["llm_judge_experimental"] = self._registry["llm_judge"]
 
     def run(
         self,

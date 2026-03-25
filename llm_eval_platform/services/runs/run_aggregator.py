@@ -34,7 +34,14 @@ class RunAggregator:
         costs = [
             float(cost)
             for result in results
-            if (cost := result.result_metadata.get("cost_usd")) is not None
+            if (
+                cost := (
+                    result.result_metadata.get("cost_usd")
+                    if result.result_metadata.get("cost_usd") is not None
+                    else (result.result_metadata.get("metric_scores") or {}).get("cost")
+                )
+            )
+            is not None
         ]
 
         status_breakdown = dict(Counter(result.status for result in results))
@@ -73,6 +80,7 @@ class RunAggregator:
                     metric_name=metric_name,
                     value=value,
                     computed_at=now,
+                    tenant_id=run.tenant_id,
                 )
             else:
                 metric.value = value
@@ -94,6 +102,35 @@ class RunAggregator:
         db.add(run)
         db.flush()
 
+    def get_analytics(self, db: Session, run_id: UUID) -> dict[str, object]:
+        run = db.scalar(select(Run).where(Run.id == run_id))
+        if run is None:
+            raise ValueError(f"Run {run_id} was not found.")
+
+        metric_rows = db.scalars(select(RunMetric).where(RunMetric.run_id == run_id)).all()
+        metrics_map = {row.metric_name: row.value for row in metric_rows}
+        summary = dict((run.parameters or {}).get("summary") or {})
+
+        return {
+            "run_id": run_id,
+            "status": run.status,
+            "examples": {
+                "total": run.total_examples,
+                "processed": run.processed_examples,
+                "completed": run.completed_examples,
+                "failed": run.failed_examples,
+            },
+            "kpis": {
+                "average_score": metrics_map.get("average_score"),
+                "latency_p50_ms": metrics_map.get("latency_p50_ms"),
+                "latency_p95_ms": metrics_map.get("latency_p95_ms"),
+                "latency_avg_ms": metrics_map.get("latency_avg_ms"),
+                "total_cost_usd": metrics_map.get("total_cost_usd"),
+            },
+            "metrics": metrics_map,
+            "status_breakdown": summary.get("status_breakdown", {}),
+        }
+    
     @staticmethod
     def _percentile(values: list[float], percentile: int) -> float:
         if not values:

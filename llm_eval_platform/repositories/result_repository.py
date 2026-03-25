@@ -19,11 +19,16 @@ class ResultRepository(BaseRepository[EvaluationResult]):
             .offset(offset)
             .limit(limit)
         )
+        tenant_id = db.info.get("tenant_id")
+        if tenant_id:
+            stmt = stmt.where(EvaluationResult.tenant_id == tenant_id)
         items = db.scalars(stmt).all()
         total_stmt = (
             select(func.count())
             .select_from(EvaluationResult)
             .where(EvaluationResult.run_id == run_id)
         )
+        if tenant_id:
+            total_stmt = total_stmt.where(EvaluationResult.tenant_id == tenant_id)
         total = db.scalar(total_stmt) or 0
         return items, total

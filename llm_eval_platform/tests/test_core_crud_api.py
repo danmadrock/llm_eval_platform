@@ -22,6 +22,8 @@ def client(tmp_path: Path):
     def override_get_db():
         db = TestingSessionLocal()
         try:
+            db.info["tenant_id"] = "tenant-dev"
+            db.info["principal_id"] = "dev-admin"
             yield db
         finally:
             db.close()
@@ -29,6 +31,7 @@ def client(tmp_path: Path):
     app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as test_client:
+        test_client.headers.update({"X-API-Key": "dev-admin"})
         yield test_client
 
     app.dependency_overrides.clear()
@@ -137,6 +140,11 @@ def test_core_crud_workflow(client: TestClient) -> None:
     assert results.json()["pagination"]["total"] == 1
     assert results.json()["data"][0]["id"] == result_id
 
+    analytics = client.get(f"/api/v1/runs/{run_id}/analytics")
+    assert analytics.status_code == 200
+    assert analytics.json()["data"]["kpis"]["average_score"] == 0.92
+    assert analytics.json()["data"]["kpis"]["latency_p50_ms"] == 123.0
+    
     update_result = client.patch(
         f"/api/v1/results/{result_id}",
         json={"score": 1.0, "metadata": {"latency_ms": 100}},

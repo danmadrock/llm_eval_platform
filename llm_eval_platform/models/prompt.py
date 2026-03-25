@@ -6,16 +6,17 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TenantScopedMixin, TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
     from llm_eval_platform.models.run import Run
 
 
-class Prompt(UUIDPrimaryKeyMixin, TimestampedModel):
+class Prompt(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "prompts"
+    __table_args__ = (UniqueConstraint("tenant_id", "name"),)
 
-    name: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), index=True)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
 
     versions: Mapped[list[PromptVersion]] = relationship(
@@ -23,9 +24,9 @@ class Prompt(UUIDPrimaryKeyMixin, TimestampedModel):
     )
 
 
-class PromptVersion(UUIDPrimaryKeyMixin, TimestampedModel):
+class PromptVersion(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "prompt_versions"
-    __table_args__ = (UniqueConstraint("prompt_id", "version"),)
+    __table_args__ = (UniqueConstraint("tenant_id", "prompt_id", "version"),)
 
     prompt_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("prompts.id", ondelete="CASCADE"), index=True
