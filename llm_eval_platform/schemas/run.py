@@ -25,6 +25,7 @@ class RunCreate(BaseModel):
     dataset_version_id: UUID
     prompt_version_id: UUID
     model_config_id: UUID
+    baseline_run_id: UUID | None = None
     status: str = Field(default="created", min_length=1, max_length=50)
     parameters: dict = Field(default_factory=dict)
     error_message: str | None = None
@@ -44,6 +45,9 @@ class RunUpdate(BaseModel):
     error_message: str | None = None
     started_at: datetime | None = None
     completed_at: datetime | None = None
+    result_artifact_uri: str | None = None
+    regression_status: str | None = None
+    regression_summary: dict | None = None
 
 
 class RunRead(BaseModel):
@@ -54,12 +58,17 @@ class RunRead(BaseModel):
     dataset_version_id: UUID
     prompt_version_id: UUID
     model_config_id: UUID
+    baseline_run_id: UUID | None
+
     status: str
     parameters: dict
     total_examples: int
     processed_examples: int
     completed_examples: int
     failed_examples: int
+    result_artifact_uri: str | None
+    regression_status: str | None
+    regression_summary: dict
     error_message: str | None
     started_at: datetime | None
     completed_at: datetime | None
@@ -75,3 +84,13 @@ class RunAnalyticsRead(BaseModel):
     kpis: dict[str, float | None]
     metrics: dict[str, float]
     status_breakdown: dict[str, int]
+
+
+class RegressionReportRead(BaseModel):
+    candidate_run_id: UUID
+    baseline_run_id: UUID
+    status: str
+    score_delta: float | None
+    failure_rate_delta: float | None
+    policy_thresholds: dict[str, float]
+    reasons: list[str] = Field(default_factory=list)

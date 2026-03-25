@@ -6,15 +6,15 @@ from typing import TYPE_CHECKING
 from sqlalchemy import JSON, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TenantScopedMixin, TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
     from llm_eval_platform.models.run import Run
 
 
-class EvaluationResult(UUIDPrimaryKeyMixin, TimestampedModel):
+class EvaluationResult(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "evaluation_results"
-    __table_args__ = (UniqueConstraint("run_id", "example_index"),)
+    __table_args__ = (UniqueConstraint("tenant_id", "run_id", "example_index"),)
 
     run_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("runs.id", ondelete="CASCADE"), index=True)
     example_index: Mapped[int] = mapped_column(Integer)

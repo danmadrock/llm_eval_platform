@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 
 import redis
-from fastapi import FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, PlainTextResponse
 
@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 import llm_eval_platform.models  # noqa: F401
 from llm_eval_platform.api.middleware import add_http_observability_middleware
 from llm_eval_platform.api.routes import (
+    dashboard_router,
     datasets_router,
     experiments_router,
     models_router,
@@ -19,6 +20,7 @@ from llm_eval_platform.api.routes import (
 )
 from llm_eval_platform.core.config import get_settings
 from llm_eval_platform.core.database import Base, check_database_health, engine
+from llm_eval_platform.core.security import bind_tenant_context
 from llm_eval_platform.core.exceptions import DomainError
 from llm_eval_platform.core.logging import configure_logging, get_logger
 from llm_eval_platform.core.observability import metrics
@@ -107,6 +109,7 @@ def prometheus_metrics() -> str:
 
 api_v1_prefix = "/api/v1"
 for router in [
+    dashboard_router,
     datasets_router,
     prompts_router,
     prompt_versions_router,
@@ -115,4 +118,4 @@ for router in [
     runs_router,
     results_router,
 ]:
-    app.include_router(router, prefix=api_v1_prefix)
+    app.include_router(router, prefix=api_v1_prefix, dependencies=[Depends(bind_tenant_context)])

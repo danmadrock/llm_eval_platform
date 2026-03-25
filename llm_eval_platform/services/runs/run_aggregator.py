@@ -80,6 +80,7 @@ class RunAggregator:
                     metric_name=metric_name,
                     value=value,
                     computed_at=now,
+                    tenant_id=run.tenant_id,
                 )
             else:
                 metric.value = value

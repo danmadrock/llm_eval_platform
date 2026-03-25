@@ -22,6 +22,8 @@ def client(tmp_path: Path):
     def override_get_db():
         db = TestingSessionLocal()
         try:
+            db.info["tenant_id"] = "tenant-dev"
+            db.info["principal_id"] = "dev-admin"
             yield db
         finally:
             db.close()
@@ -29,6 +31,7 @@ def client(tmp_path: Path):
     app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as test_client:
+        test_client.headers.update({"X-API-Key": "dev-admin"})
         yield test_client
 
     app.dependency_overrides.clear()
