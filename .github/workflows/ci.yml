@@ -46,6 +46,11 @@ jobs:
       - name: Mypy
         run: mypy llm_eval_platform/api llm_eval_platform/core llm_eval_platform/models
 
-
       - name: Pytest
         run: pytest
+
+      - name: Eval gate dry-run
+        run: |
+          python llm_eval_platform/scripts/ci_eval_gate.py \
+            --baseline llm_eval_platform/fixtures/eval_gates/baseline.json \
+            --candidate llm_eval_platform/fixtures/eval_gates/candidate.json

@@ -1,0 +1,11 @@
+{
+  "name": "rag_qa",
+  "description": "RAG question answering benchmark with faithfulness and answer completeness checks.",
+  "task_type": "qa",
+  "examples": [
+    {"question": "What is covered under plan A?", "context": "Plan A includes vision and dental.", "expected_answer": "Plan A includes vision and dental."},
+    {"question": "How long is onboarding?", "context": "Onboarding usually takes 14 days.", "expected_answer": "Onboarding usually takes 14 days."}
+  ],
+  "prompt_template": "Use only the provided context.\nContext: {context}\nQuestion: {question}\nAnswer:",
+  "metrics": ["exact_match", "semantic_similarity", "faithfulness"]
+}

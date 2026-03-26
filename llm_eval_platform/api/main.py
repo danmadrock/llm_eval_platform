@@ -9,10 +9,13 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 import llm_eval_platform.models  # noqa: F401
 from llm_eval_platform.api.middleware import add_http_observability_middleware
 from llm_eval_platform.api.routes import (
+    comparisons_router,
     dashboard_router,
+    human_review_router,
     datasets_router,
     experiments_router,
     models_router,
+    optimization_router,
     prompt_versions_router,
     prompts_router,
     results_router,
@@ -109,11 +112,14 @@ def prometheus_metrics() -> str:
 
 api_v1_prefix = "/api/v1"
 for router in [
+    comparisons_router,
     dashboard_router,
+    human_review_router,
     datasets_router,
     prompts_router,
     prompt_versions_router,
     models_router,
+    optimization_router,
     experiments_router,
     runs_router,
     results_router,
