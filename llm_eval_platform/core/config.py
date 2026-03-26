@@ -22,6 +22,13 @@ class Settings(BaseSettings):
 
     auto_create_tables: bool = False
 
+    api_key_records: list[str] = Field(default_factory=lambda: ["dev-admin:tenant-dev:admin:dev-secret"])
+    requests_per_minute: int = 120
+    artifact_bucket: str = "llm-eval-artifacts"
+    artifact_prefix: str = "tenant-artifacts"
+    regression_score_drop_threshold: float = 0.03
+    regression_failure_rate_increase_threshold: float = 0.05
+    tenant_daily_run_quota: int = 200
 
 @lru_cache
 def get_settings() -> Settings:

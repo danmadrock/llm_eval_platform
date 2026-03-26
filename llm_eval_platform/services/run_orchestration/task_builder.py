@@ -58,5 +58,9 @@ class TaskBuilder:
     def resolve_metrics(parameters: dict[str, Any]) -> list[str]:
         configured = parameters.get("metrics") if isinstance(parameters, dict) else None
         if not configured:
-            return ["exact_match"]
-        return [str(metric) for metric in configured]
+            return ["exact_match", "semantic_similarity", "latency", "cost"]
+
+        metric_names = [str(metric) for metric in configured]
+        if "llm_judge_experimental" in metric_names and "llm_judge" not in metric_names:
+            metric_names.append("llm_judge")
+        return metric_names

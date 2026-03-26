@@ -20,6 +20,7 @@ class HuggingFaceClient(BaseModelClient):
         parameters: dict[str, Any],
         input_payload: dict[str, Any],
         expected_output: dict[str, Any] | None,
+        idempotency_key: str | None = None,
     ) -> ModelResponse:
         started = perf_counter()
         output_text = self.client.text_generation(

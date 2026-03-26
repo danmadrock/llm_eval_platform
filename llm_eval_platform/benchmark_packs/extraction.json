@@ -1,0 +1,11 @@
+{
+  "name": "extraction",
+  "description": "Structured extraction benchmark for receipts and invoices.",
+  "task_type": "extraction",
+  "examples": [
+    {"document": "Invoice #17 total $52.30 due 2026-01-02", "expected_output": {"invoice_id": "17", "total": 52.3, "due_date": "2026-01-02"}},
+    {"document": "Receipt total $9.99 tax $0.80", "expected_output": {"total": 9.99, "tax": 0.8}}
+  ],
+  "prompt_template": "Extract JSON fields from the document.\nDocument: {document}\nJSON:",
+  "metrics": ["json_schema_validity", "field_f1", "cost"]
+}

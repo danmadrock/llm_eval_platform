@@ -7,15 +7,15 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, Float, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TenantScopedMixin, TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
     from llm_eval_platform.models.run import Run
 
 
-class RunMetric(UUIDPrimaryKeyMixin, TimestampedModel):
+class RunMetric(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "run_metrics"
-    __table_args__ = (UniqueConstraint("run_id", "metric_name"),)
+    __table_args__ = (UniqueConstraint("tenant_id", "run_id", "metric_name"),)
 
     run_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("runs.id", ondelete="CASCADE"), index=True)
     metric_name: Mapped[str] = mapped_column(String(100), index=True)

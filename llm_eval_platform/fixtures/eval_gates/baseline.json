@@ -1,0 +1,10 @@
+{
+  "kpis": {
+    "average_score": 0.82,
+    "total_cost_usd": 0.95
+  },
+  "examples": {
+    "total": 100,
+    "failed": 4
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any
 from uuid import UUID
+from hashlib import sha256
 
 
 @dataclass(slots=True)
@@ -17,6 +18,18 @@ class EvaluationTask:
     model_parameters: dict[str, Any]
     metrics: list[str]
 
+    def idempotency_key(self) -> str:
+        identity = {
+            "run_id": str(self.run_id),
+            "example_index": self.example_index,
+            "provider": self.model_provider,
+            "model": self.model_name,
+            "input": self.input_payload,
+            "expected_output": self.expected_output,
+        }
+        digest = sha256(repr(sorted(identity.items())).encode("utf-8")).hexdigest()
+        return f"eval:{digest}"
+    
     def to_payload(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["run_id"] = str(self.run_id)

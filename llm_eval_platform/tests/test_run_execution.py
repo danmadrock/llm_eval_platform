@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-
 from uuid import UUID
 
 from sqlalchemy import create_engine
@@ -17,8 +16,8 @@ from llm_eval_platform.models.run import Run
 from llm_eval_platform.services.evaluation_engine.engine import EvaluationEngine
 from llm_eval_platform.services.run_orchestration.orchestrator import RunOrchestrator
 from llm_eval_platform.storage.dataset_storage import DatasetStorage
-from llm_eval_platform.workers.evaluation_worker import process_evaluation_task
 from llm_eval_platform.tasks.evaluation_task import EvaluationTask
+from llm_eval_platform.workers.evaluation_worker import process_evaluation_task
 
 
 class InMemoryDatasetStorage(DatasetStorage):
@@ -140,6 +139,9 @@ def test_orchestrator_and_worker_persist_aggregate_metrics(tmp_path: Path, monke
         assert {metric.metric_name for metric in finished_run.metrics} >= {
             "average_score",
             "latency_avg_ms",
+            "latency_p50_ms",
+            "latency_p95_ms",
+            "total_cost_usd",
             "metric.exact_match.avg",
             "metric.semantic_similarity.avg",
         }
@@ -166,6 +168,7 @@ def test_engine_supports_expanded_metric_plugins() -> None:
     engine = EvaluationEngine()
     result = engine.execute(task)
     assert result["metadata"]["attempt_count"] == 1
+    assert result["metadata"]["idempotency_key"].startswith("eval:")
     assert set(result["metadata"]["metric_scores"]) == {
         "exact_match",
         "semantic_similarity",

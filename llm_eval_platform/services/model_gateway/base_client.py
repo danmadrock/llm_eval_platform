@@ -21,5 +21,6 @@ class BaseModelClient(ABC):
         parameters: dict[str, Any],
         input_payload: dict[str, Any],
         expected_output: dict[str, Any] | None,
+        idempotency_key: str | None = None,
     ) -> ModelResponse:
         raise NotImplementedError

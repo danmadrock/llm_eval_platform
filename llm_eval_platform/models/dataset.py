@@ -6,16 +6,17 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from llm_eval_platform.models.database_models import TimestampedModel, UUIDPrimaryKeyMixin
+from llm_eval_platform.models.database_models import TenantScopedMixin, TimestampedModel, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
     from llm_eval_platform.models.run import Run
 
 
-class Dataset(UUIDPrimaryKeyMixin, TimestampedModel):
+class Dataset(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "datasets"
+    __table_args__ = (UniqueConstraint("tenant_id", "name"),)
 
-    name: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), index=True)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     task_type: Mapped[str] = mapped_column(String(100), index=True)
 
@@ -24,9 +25,9 @@ class Dataset(UUIDPrimaryKeyMixin, TimestampedModel):
     )
 
 
-class DatasetVersion(UUIDPrimaryKeyMixin, TimestampedModel):
+class DatasetVersion(UUIDPrimaryKeyMixin, TenantScopedMixin, TimestampedModel):
     __tablename__ = "dataset_versions"
-    __table_args__ = (UniqueConstraint("dataset_id", "version"),)
+    __table_args__ = (UniqueConstraint("tenant_id", "dataset_id", "version"),)
 
     dataset_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("datasets.id", ondelete="CASCADE"), index=True

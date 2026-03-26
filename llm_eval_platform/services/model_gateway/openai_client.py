@@ -20,6 +20,7 @@ class OpenAIClient(BaseModelClient):
         parameters: dict[str, Any],
         input_payload: dict[str, Any],
         expected_output: dict[str, Any] | None,
+        idempotency_key: str | None = None,
     ) -> ModelResponse:
         started = perf_counter()
         response = self.client.responses.create( # type: ignore
@@ -27,6 +28,7 @@ class OpenAIClient(BaseModelClient):
             input=prompt,
             temperature=parameters.get("temperature", 0),
             max_output_tokens=parameters.get("max_tokens"),
+            idempotency_key=idempotency_key,
         )
         latency_ms = round((perf_counter() - started) * 1000, 3)
         output_text = response.output_text

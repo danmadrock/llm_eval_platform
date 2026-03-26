@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Any, cast
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
@@ -11,10 +14,11 @@ class RunRepository(BaseRepository[Run]):
     def __init__(self) -> None:
         super().__init__(Run)
 
-    def get_for_update(self, db: Session, run_id):
-        return db.get(Run, run_id)
-
-    def get_with_relations(self, db: Session, run_id):
+    def get_for_update(self, db: Session, run_id: Any) -> Run | None:
+        stmt = select(Run).where(Run.id == run_id)
+        return cast(Run | None, db.scalar(self._tenant_filter(db, stmt)))
+    
+    def get_with_relations(self, db: Session, run_id: Any) -> Run | None:
         stmt = (
             select(Run)
             .options(
@@ -26,9 +30,9 @@ class RunRepository(BaseRepository[Run]):
             )
             .where(Run.id == run_id)
         )
-        return db.scalar(stmt)
+        return cast(Run | None, db.scalar(self._tenant_filter(db, stmt)))
 
-    def list(self, db: Session, *, limit: int, offset: int):
+    def list(self, db: Session, *, limit: int, offset: int) -> tuple[list[Run], int]:
         stmt = (
             select(Run)
             .options(selectinload(Run.metrics))
@@ -36,6 +40,13 @@ class RunRepository(BaseRepository[Run]):
             .offset(offset)
             .limit(limit)
         )
-        items = db.scalars(stmt).all()
-        total = db.scalar(select(func.count()).select_from(Run)) or 0
+        stmt = self._tenant_filter(db, stmt)
+        items = list(cast(list[Run], db.scalars(stmt).all()))
+        total_stmt = self._tenant_filter(db, select(func.count()).select_from(Run))
+        total = int(db.scalar(total_stmt) or 0)
         return items, total
+
+    def count_created_since(self, db: Session, created_after: datetime) -> int:
+        stmt = select(func.count()).select_from(Run).where(Run.created_at >= created_after)
+        stmt = self._tenant_filter(db, stmt)
+        return int(db.scalar(stmt) or 0)
