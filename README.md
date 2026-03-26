@@ -11,7 +11,7 @@ This repository currently contains:
 - implemented Phase 1 CRUD APIs for core metadata;
 - an implemented Phase 2 vertical slice proving asynchronous evaluation from run orchestration through persisted results;
 
-The platform is now in an **early vertical-slice implementation stage**.
+The platform now includes **Phases 1-5 implementation scaffolding**, including differentiation workflows (comparison frontier, eval gates, optimization hooks, human review, benchmark packs).
 
 
 ## Vision
@@ -38,7 +38,8 @@ Core design docs:
 Planning and execution docs (added for implementation readiness):
 
 - `docs/repository_assessment.md` — gap analysis of current repo vs target platform
-- `docs/implementation_plan.md` — structured phased build plan with milestones
+- `docs/implementation_plan.md` — structured phased build plan with milestones + status snapshot
+- `docs/phase5_differentiation_implementation.md` — detailed Phase 5 implementation report
 - `docs/development.md` — engineering process, standards, and Definition of Done
 - `docs/templates/experiment_design_template.md` — reusable experiment brief template
 - `docs/templates/metric_spec_template.md` — reusable metric design template
@@ -69,10 +70,12 @@ Target runtime stack:
 - Workers: Python worker processes
 - Storage: S3-compatible object storage
 
-Planned start command:
+Local commands:
 
 ```bash
-docker compose up --build
+make setup
+make test
+make run-local
 ```
 
 ---
